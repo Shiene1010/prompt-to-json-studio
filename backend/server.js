@@ -76,7 +76,7 @@ Your output must be a valid JSON object with the following structure:
 {
     "service_key": "string", // service key from the registry
     "status": "ready" | "clarify" | "unsupported", 
-    "payload": { ... }, // the structured data matching the service's schema
+    "slots": { ... }, // the structured data matching the service's schema
     "missing_slots": ["string"], // list of required fields missing from the input
     "message": "string" // a friendly response to the user
 }
@@ -119,7 +119,7 @@ function parseWithRules(prompt) {
         return {
             service_key: "bus.arrival.alert",
             status: ready ? "ready" : "clarify",
-            payload: { bus_number, station_name },
+            slots: { bus_number, station_name },
             missing_slots: ready ? [] : (!bus_number ? ["bus_number"] : ["station_name"]),
             message: ready ? `Searching for bus ${bus_number} at ${station_name}.` : "Which bus or station are you looking for?"
         };
@@ -132,7 +132,7 @@ function parseWithRules(prompt) {
         return {
             service_key: "receipt.scan.record",
             status: amount > 0 ? "ready" : "clarify",
-            payload: {
+            slots: {
                 items: [{ name: "Unknown Item", price: amount }],
                 total_amount: amount
             },
@@ -146,7 +146,7 @@ function parseWithRules(prompt) {
         return {
             service_key: "english.expression.check",
             status: "ready",
-            payload: {
+            slots: {
                 text: prompt.trim()
             },
             missing_slots: [],
@@ -157,7 +157,7 @@ function parseWithRules(prompt) {
     return {
         service_key: null,
         status: "unsupported",
-        payload: {},
+        slots: {},
         missing_slots: [],
         message: "I couldn't identify the service. Try something like '30번 버스 언제 와?' or '커피 5000원 결제'."
     };
