@@ -176,11 +176,16 @@ button:active {
 }
 
 .valid {
-  color: #176a21;
+  color: #005bc2;
 }
 
 .invalid {
   color: #9f403d;
+}
+
+.warning {
+  color: #d97706;
+  font-style: italic;
 }
 
 .hidden {

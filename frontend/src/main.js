@@ -37,8 +37,18 @@ async function handleParse() {
         // Display JSON
         jsonViewer.textContent = JSON.stringify(currentPayload, null, 2);
 
-        // Validate
-        validatePayload(currentPayload);
+        // Update validation result with message from parser
+        validationResult.textContent = currentPayload.message || 'Processing...';
+
+        if (currentPayload.status === 'ready') {
+            validatePayload(currentPayload);
+        } else if (currentPayload.status === 'clarify') {
+            validationResult.className = 'warning';
+            handoffArea.classList.add('hidden');
+        } else {
+            validationResult.className = 'invalid';
+            handoffArea.classList.add('hidden');
+        }
 
     } catch (err) {
         jsonViewer.textContent = 'Error parsing prompt.';

@@ -99,11 +99,84 @@ app.get('/api/history', (req, res) => {
     res.json(history);
 });
 
+// Improved rule-based parser as a fallback
+function parseWithRules(prompt) {
+    const lowerPrompt = prompt.toLowerCase();
+
+    // 1. Bus Arrival Alert
+    const busMatch = prompt.match(/(\d+)\s*번\s*버스/);
+    const stationMatch = prompt.match(/([가-힣]+(?:역|정류장|오거리|거리|앞|교차로))/);
+
+    if (busMatch || (prompt.includes("버스") && prompt.includes("언제"))) {
+        const bus_number = busMatch ? busMatch[1] : null;
+        const station_name = stationMatch ? stationMatch[1] : null;
+        const ready = bus_number && station_name;
+
+        return {
+            service_key: "bus.arrival.alert",
+            status: ready ? "ready" : "clarify",
+            payload: { bus_number, station_name },
+            missing_slots: ready ? [] : (!bus_number ? ["bus_number"] : ["station_name"]),
+            message: ready ? `Searching for bus ${bus_number} at ${station_name}.` : "Which bus or station are you looking for?"
+        };
+    }
+
+    // 2. Receipt Scan Record
+    const priceMatch = prompt.match(/(\d+(?:,\d+)?)\s*원/);
+    if (prompt.includes("원") || prompt.includes("결제") || prompt.includes("가계부") || prompt.includes("영수증")) {
+        const amount = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : 0;
+        return {
+            service_key: "receipt.scan.record",
+            status: amount > 0 ? "ready" : "clarify",
+            payload: {
+                items: [{ name: "Unknown Item", price: amount }],
+                total_amount: amount
+            },
+            missing_slots: amount > 0 ? [] : ["total_amount"],
+            message: amount > 0 ? `Recorded spending of ${amount} won.` : "How much did you spend?"
+        };
+    }
+
+    // 3. English Expression Check
+    if (/[a-zA-Z]/.test(prompt)) {
+        return {
+            service_key: "english.expression.check",
+            status: "ready",
+            payload: {
+                text: prompt.trim()
+            },
+            missing_slots: [],
+            message: "Analyzing English expression."
+        };
+    }
+
+    return {
+        service_key: null,
+        status: "unsupported",
+        payload: {},
+        missing_slots: [],
+        message: "I couldn't identify the service. Try something like '30번 버스 언제 와?' or '커피 5000원 결제'."
+    };
+}
+
 app.post('/api/parse', async (req, res) => {
     const { prompt } = req.body;
 
     try {
-        const geminiResult = await parseWithGemini(prompt);
+        let geminiResult;
+
+        // Use Gemini if key is provided and valid
+        if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY_HERE') {
+            try {
+                geminiResult = await parseWithGemini(prompt);
+            } catch (err) {
+                console.warn("Gemini failing, falling back to rules:", err.message);
+                geminiResult = parseWithRules(prompt);
+            }
+        } else {
+            // Fallback to rules if no key
+            geminiResult = parseWithRules(prompt);
+        }
 
         const result = {
             prompt,
@@ -115,8 +188,8 @@ app.post('/api/parse', async (req, res) => {
         saveHistory(result);
         res.json(result);
     } catch (error) {
-        console.error("Gemini Parsing Error:", error);
-        res.status(500).json({ error: "Failed to parse input with Gemini" });
+        console.error("Critical Parsing Error:", error);
+        res.status(500).json({ error: "System error during parsing" });
     }
 });
 

@@ -1,0 +1,53 @@
+[
+  {
+    "id": "1774854349930",
+    "timestamp": "2026-03-30T07:05:49.930Z",
+    "prompt": "30번 버스 언제 오나 알려줄래",
+    "service_key": "bus.arrival.alert",
+    "status": "clarify",
+    "payload": {
+      "bus_number": "30",
+      "station_name": null
+    },
+    "missing_slots": [
+      "station_name"
+    ],
+    "message": "Which bus or station are you looking for?",
+    "schema_version": 1,
+    "domain": "transportation"
+  },
+  {
+    "id": "1774854379118",
+    "timestamp": "2026-03-30T07:06:19.118Z",
+    "prompt": "점심으로 12000원 결제함",
+    "service_key": "receipt.scan.record",
+    "status": "ready",
+    "payload": {
+      "items": [
+        {
+          "name": "Unknown Item",
+          "price": 12000
+        }
+      ],
+      "total_amount": 12000
+    },
+    "missing_slots": [],
+    "message": "Recorded spending of 12000 won.",
+    "schema_version": 1,
+    "domain": "finance"
+  },
+  {
+    "id": "1774854395192",
+    "timestamp": "2026-03-30T07:06:35.192Z",
+    "prompt": "I am go to school",
+    "service_key": "english.expression.check",
+    "status": "ready",
+    "payload": {
+      "text": "I am go to school"
+    },
+    "missing_slots": [],
+    "message": "Analyzing English expression.",
+    "schema_version": 1,
+    "domain": "education"
+  }
+]
