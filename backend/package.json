@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "cors": "^2.8.6",

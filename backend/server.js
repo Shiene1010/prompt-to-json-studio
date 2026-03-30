@@ -15,6 +15,10 @@ app.use(express.json());
 const ajv = new Ajv();
 addFormats(ajv);
 
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 // Load registries
 const serviceRegistry = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/service-registry.json'), 'utf8'));
 const schemaRegistry = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/schema-registry.json'), 'utf8'));
@@ -51,51 +55,69 @@ function saveHistory(entry) {
     fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2));
 }
 
+async function parseWithGemini(prompt) {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const systemPrompt = `
+You are a 'Prompt-to-JSON' router. Your task is to analyze the user's input and convert it into a structured JSON payload based on the available services.
+
+Available Services:
+1. bus.arrival.alert: For bus arrival information. Needs 'bus_number' and 'station_name'.
+2. receipt.scan.record: For recording receipts/spending. Needs 'items' (list of {item, price}) and 'total_amount'.
+3. english.expression.check: For checking or correcting English sentences. Needs 'text'.
+
+JSON Schema Definitions are available for each service.
+
+Your output must be a valid JSON object with the following structure:
+{
+    "service_key": "string", // service key from the registry
+    "status": "ready" | "clarify" | "unsupported", 
+    "payload": { ... }, // the structured data matching the service's schema
+    "missing_slots": ["string"], // list of required fields missing from the input
+    "message": "string" // a friendly response to the user
+}
+
+If the user's intent matches a service but information is missing, set status to "clarify" and list the missing fields.
+If the intent is unclear, set status to "unsupported".
+
+User Input: "${prompt}"
+`;
+
+    const result = await model.generateContent(systemPrompt);
+    const response = await result.response;
+    const text = response.text();
+
+    // Clean potential markdown code blocks from the response
+    const jsonString = text.replace(/```json|```/g, '').trim();
+    return JSON.parse(jsonString);
+}
+
+
 // endpoints
 app.get('/api/history', (req, res) => {
     const history = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8'));
     res.json(history);
 });
 
-app.post('/api/parse', (req, res) => {
+app.post('/api/parse', async (req, res) => {
     const { prompt } = req.body;
 
-    // Simple rule-based mock for initial testing
-    let service_key = null;
-    let status = "unsupported";
-    let slots = {};
-    let message = "I didn't understand that.";
+    try {
+        const geminiResult = await parseWithGemini(prompt);
 
-    if (prompt.includes("버스") || prompt.includes("bus")) {
-        service_key = "bus.arrival.alert";
-        status = "ready";
-        slots = { bus_number: "30", station_name: "신갈오거리" };
-        message = "Bus alert found.";
-    } else if (prompt.includes("영수증") || prompt.includes("가계부") || prompt.includes("receipt")) {
-        service_key = "receipt.scan.record";
-        status = "ready";
-        slots = { items: [{ name: "Coffee", price: 5000 }], total_amount: 5000 };
-        message = "Receipt record found.";
-    } else if (prompt.includes("영어") || prompt.includes("English")) {
-        service_key = "english.expression.check";
-        status = "ready";
-        slots = { text: "I would have helped you" };
-        message = "English expression found.";
+        const result = {
+            prompt,
+            ...geminiResult,
+            schema_version: 1,
+            domain: geminiResult.service_key ? (geminiResult.service_key === 'bus.arrival.alert' ? 'transportation' : (geminiResult.service_key === 'receipt.scan.record' ? 'finance' : 'education')) : null
+        };
+
+        saveHistory(result);
+        res.json(result);
+    } catch (error) {
+        console.error("Gemini Parsing Error:", error);
+        res.status(500).json({ error: "Failed to parse input with Gemini" });
     }
-
-    const result = {
-        prompt,
-        service_key,
-        schema_version: 1,
-        domain: service_key ? (service_key === 'bus.arrival.alert' ? 'transportation' : (service_key === 'receipt.scan.record' ? 'finance' : 'education')) : null,
-        status,
-        slots,
-        missing_slots: [],
-        message
-    };
-
-    saveHistory(result);
-    res.json(result);
 });
 
 

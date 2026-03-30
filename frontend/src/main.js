@@ -15,11 +15,11 @@ let currentPayload = null;
 async function checkHealth() {
     try {
         await axios.get(`${API_BASE}/services`);
-        statusBar.textContent = 'Backend: Connected';
-        statusBar.style.color = '#4ade80';
+        statusBar.textContent = 'SYSTEM ACTIVE';
+        statusBar.style.color = '#005bc2'; // Surgical Blue
     } catch (err) {
-        statusBar.textContent = 'Backend: Disconnected';
-        statusBar.style.color = '#f87171';
+        statusBar.textContent = 'SYSTEM OFFLINE';
+        statusBar.style.color = '#9f403d'; // Error Red
     }
 }
 
