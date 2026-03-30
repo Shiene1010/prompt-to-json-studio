@@ -98,14 +98,24 @@ function handleHandoff() {
     axios.get(`${API_BASE}/services`).then(res => {
         const service = res.data.find(s => s.service_key === currentPayload.service_key);
         if (service) {
-            const url = new URL(service.target_url);
-            // Base64 encode the payload
-            const encodedPayload = btoa(JSON.stringify(currentPayload));
-            url.searchParams.set('payload', encodedPayload);
-            url.searchParams.set('sv', currentPayload.schema_version);
+            try {
+                const url = new URL(service.target_url);
 
-            window.open(url.toString(), '_blank');
+                // Safe Base64 encoding for Unicode (Korean) characters
+                const jsonStr = JSON.stringify(currentPayload);
+                const encodedPayload = btoa(unescape(encodeURIComponent(jsonStr)));
+
+                url.searchParams.set('payload', encodedPayload);
+                url.searchParams.set('sv', currentPayload.schema_version);
+
+                window.open(url.toString(), '_blank');
+            } catch (e) {
+                console.error("Payload encoding or URL error:", e);
+                alert("서비스로 전송 중 오류가 발생했습니다: " + e.message);
+            }
         }
+    }).catch(err => {
+        console.error("Error fetching services for handoff:", err);
     });
 }
 
