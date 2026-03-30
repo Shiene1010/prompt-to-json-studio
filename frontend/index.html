@@ -1,58 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt-to-JSON Studio</title>
-    <link rel="stylesheet" href="/style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompt-to-JSON Router</title>
+    <!-- Use Inter font for precision editorial look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css" />
 </head>
-<body>
-    <div id="app">
-        <header>
-            <h1>Prompt-to-JSON Studio</h1>
-            <div id="status-bar">Connecting to backend...</div>
-        </header>
-        
-        <main class="studio-layout">
-            <!-- Panel 1: Prompt Input -->
-            <section class="panel prompt-panel">
-                <div class="panel-header">
-                    <h2>1. Natural Language Prompt</h2>
-                </div>
-                <div class="panel-body">
-                    <textarea id="prompt-input" placeholder="e.g., 30번 버스 언제 오는지 알려줘"></textarea>
-                    <button id="parse-btn">Parse to JSON</button>
-                </div>
-            </section>
 
-            <!-- Panel 2: Structured JSON -->
-            <section class="panel json-panel">
-                <div class="panel-header">
-                    <h2>2. Structured Payload</h2>
-                </div>
-                <div class="panel-body">
-                    <pre id="json-viewer">{}</pre>
-                </div>
-            </section>
+<body class="magic-mode">
+    <div class="command-center">
+        <div class="glp-logo">Prompt-to-JSON</div>
 
-            <!-- Panel 3: Validation & Handoff -->
-            <section class="panel validation-panel">
-                <div class="panel-header">
-                    <h2>3. Validation & Handoff</h2>
-                </div>
-                <div class="panel-body">
-                    <div id="validation-result">Pending parse...</div>
-                    <div id="handoff-area" class="hidden">
-                        <button id="handoff-btn">Go to Service</button>
-                    </div>
-                </div>
-            </section>
-        </main>
+        <form id="magic-form" class="magic-form">
+            <div class="input-glass">
+                <input type="text" id="magic-input" placeholder="What do you want to do?" autocomplete="off"
+                    autofocus />
+                <button type="submit" id="magic-submit">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+            <div id="magic-message" class="magic-message hidden"></div>
+        </form>
 
-        <footer>
-            <button id="view-history">View History</button>
-        </footer>
+        <div class="suggestion-chips">
+            <button class="chip" data-prompt="신갈오거리 정류장에서 30번 버스 언제 와?">Bus arrival</button>
+            <button class="chip" data-prompt="오늘 점심으로 짜장면 8000원 결제했어">Scan receipt</button>
+            <button class="chip" data-prompt="If I knew Chinese, I would have helped you">English check</button>
+        </div>
     </div>
+
+    <div class="dev-link">
+        <a href="/studio.html">Developer Mode</a>
+    </div>
+
+    <!-- We use Axios for API requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="module" src="/src/main.js"></script>
 </body>
+
 </html>
