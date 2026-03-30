@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_BASE
-    ? import.meta.env.VITE_API_BASE + '/api'
-    : 'http://localhost:3001/api';
+const isProd = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+const API_BASE = isProd ? 'https://ptjs-backend.onrender.com/api' : 'http://localhost:3001/api';
 
 const promptInput = document.getElementById('prompt-input');
 const parseBtn = document.getElementById('parse-btn');

@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001/api';
+const isProd = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+const API_BASE = isProd ? 'https://ptjs-backend.onrender.com/api' : 'http://localhost:3001/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('magic-form');
