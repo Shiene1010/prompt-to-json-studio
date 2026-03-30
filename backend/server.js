@@ -30,6 +30,10 @@ function loadSchema(schemaPath) {
 }
 
 // endpoints
+app.get('/', (req, res) => {
+    res.send('Prompt-to-JSON Studio API Server is running. Please access the API endpoints (e.g., /api/services) or visit the separate frontend URL for the UI.');
+});
+
 app.get('/api/services', (req, res) => {
     res.json(serviceRegistry);
 });
