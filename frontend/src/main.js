@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = import.meta.env.VITE_API_BASE
+    ? import.meta.env.VITE_API_BASE + '/api'
+    : 'http://localhost:3001/api';
 
 const promptInput = document.getElementById('prompt-input');
 const parseBtn = document.getElementById('parse-btn');

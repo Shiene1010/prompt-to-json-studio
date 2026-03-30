@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: ptjs-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false # User needs to provide this in the Render dashboard
+
+  - type: web
+    name: ptjs-frontend
+    env: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE
+        fromService:
+          type: web
+          name: ptjs-backend
+          envVarKey: RENDER_EXTERNAL_URL
