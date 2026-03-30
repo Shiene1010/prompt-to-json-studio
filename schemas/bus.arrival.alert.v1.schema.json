@@ -1,0 +1,62 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Bus Arrival Alert Schema v1",
+    "type": "object",
+    "properties": {
+        "service_key": {
+            "type": "string",
+            "const": "bus.arrival.alert"
+        },
+        "schema_version": {
+            "type": "integer",
+            "const": 1
+        },
+        "domain": {
+            "type": "string",
+            "const": "transportation"
+        },
+        "status": {
+            "type": "string",
+            "enum": [
+                "ready",
+                "clarify",
+                "unsupported",
+                "error"
+            ]
+        },
+        "slots": {
+            "type": "object",
+            "properties": {
+                "bus_number": {
+                    "type": "string"
+                },
+                "station_name": {
+                    "type": "string"
+                },
+                "alert_timing": {
+                    "type": "string",
+                    "description": "e.g., '2 stops before'"
+                }
+            },
+            "required": [
+                "bus_number"
+            ]
+        },
+        "missing_slots": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "message": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "service_key",
+        "schema_version",
+        "domain",
+        "status",
+        "slots"
+    ]
+}

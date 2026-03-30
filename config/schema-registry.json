@@ -1,0 +1,20 @@
+[
+  {
+    "service_key": "bus.arrival.alert",
+    "schema_version": 1,
+    "schema_file": "schemas/bus.arrival.alert.v1.schema.json",
+    "active": true
+  },
+  {
+    "service_key": "receipt.scan.record",
+    "schema_version": 1,
+    "schema_file": "schemas/receipt.scan.record.v1.schema.json",
+    "active": true
+  },
+  {
+    "service_key": "english.expression.check",
+    "schema_version": 1,
+    "schema_file": "schemas/english.expression.check.v1.schema.json",
+    "active": true
+  }
+]

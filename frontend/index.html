@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt-to-JSON Studio</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>Prompt-to-JSON Studio</h1>
+            <div id="status-bar">Connecting to backend...</div>
+        </header>
+        
+        <main class="studio-layout">
+            <!-- Panel 1: Prompt Input -->
+            <section class="panel prompt-panel">
+                <div class="panel-header">
+                    <h2>1. Natural Language Prompt</h2>
+                </div>
+                <div class="panel-body">
+                    <textarea id="prompt-input" placeholder="e.g., 30번 버스 언제 오는지 알려줘"></textarea>
+                    <button id="parse-btn">Parse to JSON</button>
+                </div>
+            </section>
+
+            <!-- Panel 2: Structured JSON -->
+            <section class="panel json-panel">
+                <div class="panel-header">
+                    <h2>2. Structured Payload</h2>
+                </div>
+                <div class="panel-body">
+                    <pre id="json-viewer">{}</pre>
+                </div>
+            </section>
+
+            <!-- Panel 3: Validation & Handoff -->
+            <section class="panel validation-panel">
+                <div class="panel-header">
+                    <h2>3. Validation & Handoff</h2>
+                </div>
+                <div class="panel-body">
+                    <div id="validation-result">Pending parse...</div>
+                    <div id="handoff-area" class="hidden">
+                        <button id="handoff-btn">Go to Service</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <button id="view-history">View History</button>
+        </footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

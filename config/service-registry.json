@@ -1,0 +1,20 @@
+[
+    {
+        "service_key": "bus.arrival.alert",
+        "target_url": "https://sunny-valley30bus-oi05v4fw5-shiene1010s-projects.vercel.app",
+        "description": "Bus arrival notification service for Singal Junction.",
+        "active": true
+    },
+    {
+        "service_key": "receipt.scan.record",
+        "target_url": "https://shiene1010.github.io/BookKeepingApp/",
+        "description": "Receipt scanning and bookkeeping service.",
+        "active": true
+    },
+    {
+        "service_key": "english.expression.check",
+        "target_url": "https://shiene1010.github.io/HedgeExpression/",
+        "description": "Natural English expression concept checking service.",
+        "active": true
+    }
+]

@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Receipt Scan Record Schema v1",
+    "type": "object",
+    "properties": {
+        "service_key": {
+            "type": "string",
+            "const": "receipt.scan.record"
+        },
+        "schema_version": {
+            "type": "integer",
+            "const": 1
+        },
+        "domain": {
+            "type": "string",
+            "const": "finance"
+        },
+        "status": {
+            "type": "string",
+            "enum": [
+                "ready",
+                "clarify",
+                "unsupported",
+                "error"
+            ]
+        },
+        "slots": {
+            "type": "object",
+            "properties": {
+                "raw_text": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "price": {
+                                "type": "number"
+                            },
+                            "category": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "total_amount": {
+                    "type": "number"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "missing_slots": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "message": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "service_key",
+        "schema_version",
+        "domain",
+        "status",
+        "slots"
+    ]
+}
